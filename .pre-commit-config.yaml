@@ -3,4 +3,11 @@ repos:
   rev: v1.103.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
   hooks:
     - id: terraform_fmt
+    - id: terraform_validate
     - id: terraform_docs
+    - id: terraform_checkov
+    - id: terraform_tflint
+    - id: terraform_trivy
+    - id: infracost_breakdown
+    - id: terragrunt_validate_inputs
+    - id: terrascan
