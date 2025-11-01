@@ -1,13 +1,45 @@
+exclude: (^|/)\.terraform/
 repos:
-- repo: https://github.com/antonbabenko/pre-commit-terraform
-  rev: v1.103.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
-  hooks:
-    - id: terraform_fmt
-    - id: terraform_validate
-    - id: terraform_docs
-    - id: terraform_checkov
-    - id: terraform_tflint
-    - id: terraform_trivy
-    - id: infracost_breakdown
-    - id: terragrunt_validate_inputs
-    - id: terrascan
+  # Terraform Hooks
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.103.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_docs
+      - id: terraform_checkov
+      - id: terraform_tflint
+      - id: terraform_trivy
+      - id: infracost_breakdown
+      - id: terragrunt_validate_inputs
+      - id: terrascan
+  # Format YAML first so linters run on tidy files
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.20.0
+    hooks:
+      - id: yamlfmt
+        files: ^.*\.yaml$
+  # GitHub Actions Lint
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.8
+    hooks:
+      - id: actionlint
+        files: ^\.github/workflows/.*\.yaml$
+  # Bash Lints
+  - repo: https://github.com/openstack/bashate
+    rev: 2.1.1
+    hooks:
+      - id: bashate
+        types_or: [shell]
+  # Dockerfile fmt Before Hadolint
+  - repo: https://github.com/reteps/dockerfmt
+    rev: v0.3.9
+    hooks:
+      - id: dockerfmt
+        files: ^app/Dockerfile$
+  # Dockerfile Hadolint Lint
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.14.0
+    hooks:
+      - id: hadolint
+        files: ^app/Dockerfile$
