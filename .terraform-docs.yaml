@@ -1,0 +1,9 @@
+formatter: markdown table
+output:
+  file: README.md # write to README.md
+  mode: inject # only replace the marked region
+sections:
+  show: ["header", "providers", "inputs", "outputs", "resources", "modules"]
+sort:
+  enabled: true
+  by: name

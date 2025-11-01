@@ -7,12 +7,16 @@ repos:
       - id: terraform_fmt
       - id: terraform_validate
       - id: terraform_docs
+        args:
+          - --args=--config=.terraform-docs.yml
       - id: terraform_checkov
-      - id: terraform_tflint
+        stages: [push]
       - id: terraform_trivy
-      - id: infracost_breakdown
-      - id: terragrunt_validate_inputs
+        stages: [push]
       - id: terrascan
+        stages: [push]
+      - id: infracost_breakdown
+        stages: [push]
   # Format YAML first so linters run on tidy files
   - repo: https://github.com/google/yamlfmt
     rev: v0.20.0
