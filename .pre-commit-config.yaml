@@ -10,13 +10,13 @@ repos:
         args:
           - --args=--config=.terraform-docs.yml
       - id: terraform_checkov
-        stages: [push]
+        stages: [pre-push]
       - id: terraform_trivy
-        stages: [push]
+        stages: [pre-push]
       - id: terrascan
-        stages: [push]
+        stages: [pre-push]
       - id: infracost_breakdown
-        stages: [push]
+        stages: [pre-push]
   # Format YAML first so linters run on tidy files
   - repo: https://github.com/google/yamlfmt
     rev: v0.20.0
