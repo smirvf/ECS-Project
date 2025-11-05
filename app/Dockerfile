@@ -8,8 +8,9 @@ RUN yarn build
 
 FROM node:${NODE_VERSION} AS runtime
 WORKDIR /app
-COPY --from=builder /app/build /app/build
+COPY --from=builder --chown=14444:14444 /app/build /app/build
 RUN yarn global add serve
+RUN addgroup -g 14444 test && adduser -D -u 14444 -G test TestSM
 EXPOSE 3000
+USER 14444:14444
 CMD ["serve", "-s", "build"]
-# Testing local prehooks
