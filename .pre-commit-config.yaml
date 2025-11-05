@@ -17,6 +17,9 @@ repos:
       - id: terraform_trivy
         stages: [pre-push]
         files: ^infra/
+      - id: infracost_breakdown
+        stages: [pre-push]
+        files: ^infra/
   # Format YAML first so linters run on tidy files
   - repo: https://github.com/google/yamlfmt
     rev: v0.20.0
