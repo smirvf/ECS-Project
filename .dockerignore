@@ -1,0 +1,44 @@
+app/node_modules
+.git
+.gitignore
+../Dockerfile
+.dockerignore
+
+# Ignore dependencies and build output
+/app/dist/
+/app/out/
+/app/.tmp/
+/app/.cache/
+
+# Ignore Vite, Webpack, and React-specific build artifacts
+/app/.vite/
+/app/.vitepress/
+/app/.eslintcache
+/app/.npm/
+/app/coverage/
+/app/jest/
+/app/cypress/
+/app/cypress/screenshots/
+/app/cypress/videos/
+/app/reports/
+
+# Ignore environment and config files (sensitive data)
+/app/*.env*
+/app/*.log
+
+# Ignore TypeScript build artifacts (if using TypeScript)
+/app/*.tsbuildinfo
+
+# Ignore local development files
+/app/.git/
+*/.gitignore
+.gitignore
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Ignore Docker-related files (to avoid copying unnecessary configs)
+Dockerfile
+.dockerignore

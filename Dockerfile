@@ -1,9 +1,9 @@
 ARG NODE_VERSION=24.7.0-alpine
 FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
-COPY package.json yarn.lock ./
+COPY /app/package.json /app/yarn.lock ./
 RUN yarn install --frozen-lockfile # using frozen-lockfile to make sure that versioning is consistent
-COPY . .
+COPY /app .
 RUN yarn build
 
 FROM node:${NODE_VERSION} AS runtime
