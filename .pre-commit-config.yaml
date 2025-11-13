@@ -43,10 +43,10 @@ repos:
     rev: v0.3.9
     hooks:
       - id: dockerfmt
-        files: ^app/Dockerfile$
+        files: ^Dockerfile$
   # Dockerfile Hadolint Lint
   - repo: https://github.com/hadolint/hadolint
     rev: v2.14.0
     hooks:
       - id: hadolint
-        files: ^app/Dockerfile$
+        files: ^Dockerfile$
