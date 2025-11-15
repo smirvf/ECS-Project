@@ -5,9 +5,6 @@ resource "aws_ecr_repository" "threat_app_image" {
   image_scanning_configuration {
     scan_on_push = true
   }
-  encryption_configuration {
-    encryption_type = "AES256"
-  }
 }
 
 resource "aws_ecr_lifecycle_policy" "threat_image_policy" {
