@@ -10,5 +10,5 @@
 # output "ssh_cmd" { value = "ssh -i testkey ec2-user@${aws_instance.WordPressEC2.public_ip}" }
 
 output "ecr_url" {
-  value = module.ecr.ecr_url
+  value = module.ecr.threat
 }

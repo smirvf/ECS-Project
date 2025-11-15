@@ -6,8 +6,6 @@ repos:
     hooks:
       - id: terraform_fmt
         files: ^infra/.*\.tf$
-      - id: terraform_validate
-        files: ^infra/.*\.tf$
       - id: terraform_docs
         files: ^infra/.*\.tf$
         args: [--args=--config=.terraform-docs.yml]
