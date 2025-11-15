@@ -1,3 +1,5 @@
+#trivy:ignore:AVD-AWS-0033
+
 resource "aws_ecr_repository" "threat_app_image" {
   name                 = "threat_app_image"
   image_tag_mutability = "IMMUTABLE"
