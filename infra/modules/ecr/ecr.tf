@@ -1,4 +1,5 @@
 #trivy:ignore:AVD-AWS-0033
+#checkov:skip=CKV_AWS_136:ECR KMS encryption not required for this proj
 
 resource "aws_ecr_repository" "threat_app_image" {
   name                 = "threat_app_image"
