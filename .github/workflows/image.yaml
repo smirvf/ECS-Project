@@ -1,0 +1,36 @@
+name: image push test
+on:
+  workflow_dispatch: {}
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker build --tag my-image .
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.0
+        with:
+          role-to-assume: arn:aws:iam::112639119087:role/gActions
+          aws-region: eu-west-2
+      - name: Push to ECR
+        id: ecr
+        uses: jwalton/gh-ecr-push@v2
+        with:
+          region: eu-west-2
+          image: my-image:dev-${{ github.sha }}
+          #        name: Login to Docker Hub
+          #        uses: docker/login-action@v3
+          #        with:
+          #          username: ${{ vars.DOCKERHUB_USERNAME }}
+          #          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          #      -
+          #        name: Set up QEMU
+          #        uses: docker/setup-qemu-action@v3
+          #      -
+          #        name: Set up Docker Buildx
+          #        uses: docker/setup-buildx-action@v3
+          #      -
+          #        name: Build and push
+          #        uses: docker/build-push-action@v6
+          #        with:
+          #          push: true
+          #          tags: user/app:latest
