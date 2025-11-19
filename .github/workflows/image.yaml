@@ -5,7 +5,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - run: docker build --tag my-image .
+      - run: docker build --tag nginxtest .
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5.1.0
         with:
