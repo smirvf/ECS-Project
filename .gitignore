@@ -77,3 +77,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+#ignoring old folders
+docker-file-old
+/old
