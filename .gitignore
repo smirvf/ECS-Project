@@ -78,6 +78,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-#ignoring old folders
+#ignoring old folders & files
 docker-file-old
 /old
