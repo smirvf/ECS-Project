@@ -15,14 +15,14 @@ resource "aws_ecr_repository" "repository" {
 
 resource "aws_ecr_lifecycle_policy" "ecs-proj" {
   repository = aws_ecr_repository.repository.name
-  policy     = templatefile(var.lifecycle_policy, {})
+  policy     = file(var.lifecycle_policy)
 }
 
 resource "aws_ecr_registry_scanning_configuration" "scan_configuration" {
-  scan_type = "ENHANCED"
+  scan_type = "BASIC"
 
   rule {
-    scan_frequency = "CONTINUOUS_SCAN"
+    scan_frequency = "SCAN_ON_PUSH"
     repository_filter {
       filter      = "*"
       filter_type = "WILDCARD"
