@@ -54,7 +54,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
-          role-to-assume: arn:aws:iam::112639119087:role/github-actions-rmodi
+          role-to-assume: arn:aws:iam::112639119087:role/terraform-state-role-ecs-proj
           aws-region: eu-west-2
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
