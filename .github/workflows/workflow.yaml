@@ -82,7 +82,7 @@ jobs:
             -backend-config='key=docker-ecr/terraform-${{ env.ECR_REPO_NAME }}.tfstate' \
             -backend-config='use_lockfile=true' \
             -backend-config='role_arn=arn:aws:iam::${{ inputs.aws_account_id }}:role/${{ inputs.backend_iam_role }}'
-        working-directory: ${{ github.action_path }}
+        working-directory: ecr_bootstrap
       - name: Create ECR repo [TF apply]
         shell: bash
         run: |
@@ -93,7 +93,7 @@ jobs:
             -var 'iam_role=arn:aws:iam::${{ inputs.aws_account_id }}:role/${{ inputs.github_iam_role }}' \
             -var 'aws_account_id=${{ inputs.aws_account_id }}' \
             -auto-approve
-        working-directory: ${{ github.action_path }}
+        working-directory: ecr_bootstrap
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
