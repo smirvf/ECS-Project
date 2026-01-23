@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.6.0"
+  required_version = ">= 1.5.0"
 
   required_providers {
     aws = {
@@ -20,6 +20,10 @@ output "s3_bucket_name" {
 
 resource "aws_s3_bucket" "s3_bucket" {
   bucket = var.bucket_name
+  lifecycle {
+    prevent_destroy = true
+  }
+
   tags = {
     Name = "s3_bucket_tf_state"
   }
