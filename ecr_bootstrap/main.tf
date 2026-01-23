@@ -13,7 +13,7 @@ resource "aws_ecr_repository" "repository" {
   }
 }
 
-resource "aws_ecr_lifecycle_policy" "name" {
+resource "aws_ecr_lifecycle_policy" "ecs-proj" {
   repository = aws_ecr_repository.repository.name
   policy     = templatefile(var.lifecycle_policy, {})
 }

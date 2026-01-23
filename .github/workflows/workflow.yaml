@@ -24,22 +24,19 @@ on:
         type: string
       backend_iam_role:
         description: Name of the Terraform backend assumable IAM Role
-        default: "workload-assumable-role"
+        default: "terraform-state-role-ecs-proj"
         type: string
       github_iam_role:
         description: Name of the IAM Role for adding access to ECR repo
-        default: "github-actions-role"
+        default: "github-ecr-push-role-ecs-proj"
         type: string
       aws_account_id:
         description: AWS Account ID
+        default: "112639119087"
         type: string
       aws_region:
         description: Target AWS Region
         default: "eu-west-2"
-        type: string
-      backend_dynamodb_table:
-        description: DynamoDB table for State lock
-        default: "terraform-backend-ddb"
         type: string
 # concurrency required to avoid terraform lock contention during ECR provisioning
 concurrency: ci-${{ github.repository }}-docker-pipeline
@@ -83,7 +80,7 @@ jobs:
             -backend-config='region=${{ inputs.aws_region }}' \
             -backend-config='bucket=${{ inputs.backend_s3_bucket }}' \
             -backend-config='key=docker-ecr/terraform-${{ env.ECR_REPO_NAME }}.tfstate' \
-            -backend-config='dynamodb_table=${{ inputs.backend_dynamodb_table }}' \
+            -backend-config='use_lockfile=true' \
             -backend-config='role_arn=arn:aws:iam::${{ inputs.aws_account_id }}:role/${{ inputs.backend_iam_role }}'
         working-directory: ${{ github.action_path }}
       - name: Create ECR repo [TF apply]
