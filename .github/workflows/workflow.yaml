@@ -89,6 +89,7 @@ jobs:
           terraform apply \
             -var 'repository_name=${{ env.ECR_REPO_NAME }}' \
             -var 'lifecycle_policy=${{ inputs.lifecycle_policy_file }}' \
+            -var 'iam_role=arn:aws:iam::${{ inputs.aws_account_id }}:role/${{ inputs.github_iam_role }}' \
             -var 'aws_account_id=${{ inputs.aws_account_id }}' \
             -auto-approve
         working-directory: ecr_bootstrap
