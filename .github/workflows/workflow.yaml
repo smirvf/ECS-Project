@@ -16,7 +16,7 @@ on:
         default: snapshot-artifact
       lifecycle_policy_file:
         description: Path to the lifecycle policy JSON file (default = 'policy.json')
-        default: "ecr_bootstrap/e2e-test/policy.json"
+        default: "policy.json"
         type: string
       backend_s3_bucket:
         description: Name of the S3bucket for Terraform backend
@@ -57,8 +57,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
-          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-actions-rmodi
-          aws-region: ${{ inputs.aws_region }}
+          role-to-assume: arn:aws:iam::112639119087:role/github-actions-rmodi
+          aws-region: eu-west-2
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
