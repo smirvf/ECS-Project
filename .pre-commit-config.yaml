@@ -5,16 +5,16 @@ repos:
     rev: v1.103.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
       - id: terraform_fmt
-        files: ^infra/.*\.tf$
+        files: ^(infra|ecr_bootstrap|s3_bootstrap)/.*\.tf$
       - id: terraform_docs
-        files: ^infra/.*\.tf$
+        files: ^^(infra|ecr_bootstrap|s3_bootstrap)/.*\.tf$
         args: [--args=--config=.terraform-docs.yml]
       - id: terraform_checkov
         stages: [pre-push]
-        files: ^infra/
+        files: ^(infra|ecr_bootstrap)/
       - id: terraform_trivy
         stages: [pre-push]
-        files: ^infra/
+        files: ^(infra|ecr_bootstrap)/
         #      - id: infracost_breakdown
         #        stages: [pre-push]
         #        files: ^infra/

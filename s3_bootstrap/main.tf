@@ -8,10 +8,10 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "smvf-s3-bucket-test"
-    key    = "ecs-proj/s3-boostrap/terraform.tfstate"
-    region = "eu-west-2"
-    encrypt = true
+    bucket       = "smvf-s3-bucket-test"
+    key          = "ecs-proj/s3-boostrap/terraform.tfstate"
+    region       = "eu-west-2"
+    encrypt      = true
     use_lockfile = true
   }
 }
