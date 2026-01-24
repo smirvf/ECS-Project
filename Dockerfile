@@ -17,6 +17,7 @@ RUN yarn build
 #EXPOSE 3000
 #USER 14444:14444
 #CMD ["serve", "-s", "build"]
+#test line
 
 FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
 
