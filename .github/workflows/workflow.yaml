@@ -13,7 +13,7 @@ on:
       image_tag:
         description: Tag to apply to images.
         type: string
-        default: snapshot-artifact
+        default: ""
       lifecycle_policy_file:
         description: Path to the lifecycle policy JSON file (default = 'policy.json')
         default: "policy.json"
@@ -55,9 +55,9 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
           role-to-assume: arn:aws:iam::112639119087:role/terraform-state-role-ecs-proj
-          aws-region: eu-west-2
+          aws-region: ${{ inputs.aws_region }}
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
       - name: prepare ECR repo name based on the Github repository
@@ -69,6 +69,16 @@ jobs:
 
           # replace / with _
           echo "ECR_REPO_NAME=${repo//\//_}" >> $GITHUB_ENV
+      - name: Set image tag (default = short commit SHA)
+        shell: bash
+        run: |
+          set -eux
+          tag="${{ inputs.image_tag }}"
+          if [ -z "$tag" ]; then
+            # Use short SHA for readability; use $GITHUB_SHA for full 40-char SHA
+            tag="${GITHUB_SHA::7}"
+          fi
+          echo "IMAGE_TAG=$tag" >> "$GITHUB_ENV"
       - name: TF init
         shell: bash
         run: |
@@ -79,7 +89,7 @@ jobs:
             -backend-config='skip_credentials_validation=true' \
             -backend-config='region=${{ inputs.aws_region }}' \
             -backend-config='bucket=${{ inputs.backend_s3_bucket }}' \
-            -backend-config='key=ecs-proj/terraform-${{ env.ECR_REPO_NAME }}.tfstate' \
+            -backend-config='key=ecs-proj/ecr-bootstrap/terraform.tfstate' \
             -backend-config='use_lockfile=true' \
         working-directory: ecr_bootstrap
       - name: Create ECR repo [TF apply]
