@@ -1,5 +1,10 @@
 name: Docker image build and publish
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'Dockerfile'
+      - '.dockerignore'
   workflow_dispatch:
     inputs:
       path_to_dockerfile:
@@ -41,7 +46,7 @@ on:
 # concurrency required to avoid terraform lock contention during ECR provisioning
 concurrency: ci-${{ github.repository }}-docker-pipeline
 jobs:
-  docker:
+  docker-image-push:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
