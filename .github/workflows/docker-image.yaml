@@ -41,6 +41,12 @@ on:
 # concurrency required to avoid terraform lock contention during ECR provisioning
 concurrency: ci-${{ github.repository }}-docker-pipeline
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
   docker-image-push:
     runs-on: ubuntu-latest
     permissions:
@@ -75,6 +81,20 @@ jobs:
           set -eux
           tag="${{ inputs.image_tag }}-${GITHUB_SHA::7}"
           echo "IMAGE_TAG=$tag" >> "$GITHUB_ENV"
+
+          testingTag="${GITHUB_SHA::7}"
+          echo "Testing_TAG=$testingTag" >> "$GITHUB_ENV"
+      - name: Build an image from Dockerfile
+        run: docker build -t ${{ inputs.image_tag }}:${{ env.Testing_TAG }} .
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: '${{ inputs.image_tag }}:${{ env.Testing_TAG }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
       - name: TF init
         shell: bash
         run: |
