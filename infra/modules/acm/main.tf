@@ -13,9 +13,10 @@ data "aws_route53_zone" "ecs_route53_zone" {
 
 # Route 53 Record Section
 resource "aws_route53_record" "ecs_domain_record" {
-  zone_id = data.aws_route53_zone.ecs_route53_zone.zone_id
-  name    = "ECS A record"
-  type    = "A"
+  zone_id         = data.aws_route53_zone.ecs_route53_zone.zone_id
+  name            = var.ecs_domain
+  type            = "A"
+  allow_overwrite = true
 
   alias {
     name                   = var.ecs_alb_dns_name
@@ -23,4 +24,3 @@ resource "aws_route53_record" "ecs_domain_record" {
     evaluate_target_health = true
   }
 }
-

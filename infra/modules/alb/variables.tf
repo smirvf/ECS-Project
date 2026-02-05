@@ -18,11 +18,6 @@ variable "ecs_task_port" {
   description = "port for task"
 }
 
-variable "acm_cert_arn" {
-  type        = string
-  description = "ACM Cert ARN"
-}
-
 variable "alb_ssl_policy" {
   type    = string
   default = "ELBSecurityPolicy-TLS13-1-2-2021-06"
