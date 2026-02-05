@@ -14,7 +14,7 @@ data "aws_route53_zone" "ecs_route53_zone" {
 # Route 53 Record Section
 resource "aws_route53_record" "ecs_domain_record" {
   zone_id = data.aws_route53_zone.ecs_route53_zone.zone_id
-  name    = var.ecs_record_name
+  name    = "ECS A record"
   type    = "A"
 
   alias {

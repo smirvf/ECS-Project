@@ -12,10 +12,10 @@ variable "ecs_alb_zone_id" {
   type = string
 }
 
-variable "ecs_record_name" {
-  type        = string
-  description = "Record Name for Hosted Zone"
-}
+# variable "ecs_acm_record_name" {
+#   type        = string
+#   description = "Record Name for Hosted Zone"
+# }
 
 variable "ecs_alb_dns_name" {
   type        = string

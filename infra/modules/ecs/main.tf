@@ -18,10 +18,10 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   family                   = "ecs_task_definition"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  execution_role_arn       = data.aws_iam_role.ecs_task_execution_iam_role.arn
+  cpu                      = 512
+  memory                   = 1024
 
-  cpu    = 512
-  memory = 1024
+  execution_role_arn = data.aws_iam_role.ecs_task_execution_iam_role.arn
 
   runtime_platform {
     operating_system_family = "LINUX"
@@ -32,6 +32,9 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
       name      = "threat-app"
       image     = data.aws_ecr_image.ecr_image_name.image_uri
       essential = true
+      cpu       = 512
+      memory    = 1024
+
       portMappings = [
         {
           containerPort = 8080
@@ -42,27 +45,24 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
 }
 
 # ECS Service Section
-resource "aws_ecs_service" "ecs_" {
-  name            = "mongodb"
-  cluster         = aws_ecs_cluster.foo.id
-  task_definition = aws_ecs_task_definition.mongo.arn
-  desired_count   = 3
-  iam_role        = aws_iam_role.foo.arn
-  depends_on      = [aws_iam_role_policy.foo]
+resource "aws_ecs_service" "ecs_proj_service" {
+  name            = "ecs_proj_service"
+  launch_type     = "FARGATE"
+  cluster         = aws_ecs_cluster.ecs_cluster.id
+  task_definition = aws_ecs_task_definition.ecs_task_definition.arn
+  desired_count   = 2
 
-  ordered_placement_strategy {
-    type  = "binpack"
-    field = "cpu"
+  # depends_on      = [module.alb] - mention this in root
+
+  network_configuration {
+    security_groups  = [var.ecs_service_sg_id]
+    subnets          = [var.ecs_subnet_private_2a_id, var.ecs_subnet_private_2b_id]
+    assign_public_ip = false
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.foo.arn
-    container_name   = "mongo"
+    target_group_arn = var.ecs_alb_target_group_arn
+    container_name   = "threat-app"
     container_port   = 8080
-  }
-
-  placement_constraints {
-    type       = "memberOf"
-    expression = "attribute:ecs.availability-zone in [us-west-2a, us-west-2b]"
   }
 }
