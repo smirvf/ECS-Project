@@ -1,0 +1,89 @@
+name: Terraform Plan
+on:
+  workflow_dispatch:
+# concurrency required to avoid terraform lock contention during ECR provisioning
+concurrency: ci-${{ github.repository }}-terraform-plan-pipeline
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          role-to-assume: ${{ vars.role_to_assume_tf_state }}
+          aws-region: ${{ vars.aws_region }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+      - name: TF init
+        shell: bash
+        run: |
+          set -eux
+          terraform init -upgrade -reconfigure \
+            -backend-config='skip_metadata_api_check=true' \
+            -backend-config='skip_region_validation=true' \
+            -backend-config='skip_credentials_validation=true' \
+            -backend-config='region=${{ vars.aws_region }}' \
+            -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
+            -backend-config='key=${{ vars.infra_key }}' \
+            -backend-config='use_lockfile=true' \
+        working-directory: app
+      - name: TF plan for repo saved
+        shell: bash
+        run: |
+          set -eux
+          terraform plan \
+            -input=false \
+            -out=tfplan
+          terraform show tfplan
+        working-directory: app
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: app/tfplan
+  terraform-apply:
+    needs: terraform-plan
+    if: ${{ needs.terraform-plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          role-to-assume: ${{ vars.role_to_assume_tf_state }}
+          aws-region: ${{ vars.aws_region }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+      - name: TF init
+        shell: bash
+        run: |
+          set -eux
+          terraform init -upgrade -reconfigure \
+            -backend-config='skip_metadata_api_check=true' \
+            -backend-config='skip_region_validation=true' \
+            -backend-config='skip_credentials_validation=true' \
+            -backend-config='region=${{ vars.aws_region }}' \
+            -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
+            -backend-config='key=${{ vars.infra_key }}' \
+            -backend-config='use_lockfile=true' \
+        working-directory: app
+      - name: Download plan artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: app
+      - name: Terraform apply (saved plan)
+        working-directory: app
+        run: "set -eux\nterraform apply tfplan \n"

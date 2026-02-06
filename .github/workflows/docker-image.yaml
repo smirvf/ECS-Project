@@ -19,11 +19,11 @@ jobs:
       image_tag: ${{ steps.build-publish.outputs.image_tag }}
       full_image: ${{ steps.build-publish.outputs.full_image }}
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v4
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
-          role-to-assume: arn:aws:iam::112639119087:role/terraform-state-role-ecs-proj
+          role-to-assume: ${{ vars.role_to_assume_tf_state }}
           aws-region: ${{ vars.aws_region }}
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -68,7 +68,7 @@ jobs:
             -backend-config='skip_credentials_validation=true' \
             -backend-config='region=${{ vars.aws_region }}' \
             -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
-            -backend-config='key=ecs-proj/ecr-bootstrap/terraform.tfstate' \
+            -backend-config='key=${{ vars.ecr_key }}' \
             -backend-config='use_lockfile=true' \
         working-directory: ecr_bootstrap
       - name: Create ECR repo [TF apply]
