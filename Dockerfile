@@ -1,19 +1,25 @@
-ARG NODE_VERSION=dhi.io/node:24-alpine3.22-dev
-ARG NGINX_VERSION=dhi.io/nginx:1.28.0-alpine3.21-dev
+ARG NODE_VERSION=24.7.0-alpine
+ARG NGINX_VERSION=alpine3.23
 
-FROM ${NODE_VERSION} AS builder
-
+FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
-
 COPY /app/package.json /app/yarn.lock ./
-
 RUN yarn install --frozen-lockfile # using frozen-lockfile to make sure that versioning is consistent
-
 COPY /app .
-
 RUN yarn build
 
-FROM ${NGINX_VERSION} AS runner
+#FROM node:${NODE_VERSION} AS runtime
+#WORKDIR /app
+#COPY --from=builder /app/build /app/build
+#COPY --from=builder --chown=14444:14444 /app/build /app/build
+#RUN yarn global add serve
+#RUN addgroup -g 14444 test && adduser -D -u 14444 -G test TestSM
+#EXPOSE 3000
+#USER 14444:14444
+#CMD ["serve", "-s", "build"]
+#test line
+
+FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
 
 # Use a built-in non-root user for security best practices
 USER nginx

@@ -1,43 +1,6 @@
 name: Docker image build and publish
 on:
   workflow_dispatch:
-    inputs:
-      path_to_dockerfile:
-        description: Path to the dockerfile (default = 'Dockerfile')
-        default: "Dockerfile"
-        type: string
-      docker_build_dir:
-        description: Docker build directory (default = '.')
-        default: "."
-        type: string
-      image_tag:
-        description: Tag to apply to images.
-        type: string
-        default: "threat-app"
-      lifecycle_policy_file:
-        description: Path to the lifecycle policy JSON file (default = 'policy.json')
-        default: "policy.json"
-        type: string
-      backend_s3_bucket:
-        description: Name of the S3bucket for Terraform backend
-        default: "smvf-s3-bucket-test"
-        type: string
-      backend_iam_role:
-        description: Name of the Terraform backend assumable IAM Role
-        default: "terraform-state-role-ecs-proj"
-        type: string
-      github_iam_role:
-        description: Name of the IAM Role for adding access to ECR repo
-        default: "github-ecr-push-role-ecs-proj"
-        type: string
-      aws_account_id:
-        description: AWS Account ID
-        default: "112639119087"
-        type: string
-      aws_region:
-        description: Target AWS Region
-        default: "eu-west-2"
-        type: string
 # concurrency required to avoid terraform lock contention during ECR provisioning
 concurrency: ci-${{ github.repository }}-docker-pipeline
 jobs:
@@ -61,7 +24,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
           role-to-assume: arn:aws:iam::112639119087:role/terraform-state-role-ecs-proj
-          aws-region: ${{ inputs.aws_region }}
+          aws-region: ${{ vars.aws_region }}
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -79,17 +42,17 @@ jobs:
         shell: bash
         run: |
           set -eux
-          tag="${{ inputs.image_tag }}-${GITHUB_SHA::7}"
+          tag="${{ vars.image_tag }}-${GITHUB_SHA::7}"
           echo "IMAGE_TAG=$tag" >> "$GITHUB_ENV"
 
           testingTag="${GITHUB_SHA::7}"
           echo "Testing_TAG=$testingTag" >> "$GITHUB_ENV"
       - name: Build an image from Dockerfile
-        run: docker build -t ${{ inputs.image_tag }}:${{ env.Testing_TAG }} .
+        run: docker build -t ${{ vars.image_tag }}:${{ env.Testing_TAG }} .
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.33.1
         with:
-          image-ref: '${{ inputs.image_tag }}:${{ env.Testing_TAG }}'
+          image-ref: '${{ vars.image_tag }}:${{ env.Testing_TAG }}'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
@@ -103,8 +66,8 @@ jobs:
             -backend-config='skip_metadata_api_check=true' \
             -backend-config='skip_region_validation=true' \
             -backend-config='skip_credentials_validation=true' \
-            -backend-config='region=${{ inputs.aws_region }}' \
-            -backend-config='bucket=${{ inputs.backend_s3_bucket }}' \
+            -backend-config='region=${{ vars.aws_region }}' \
+            -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
             -backend-config='key=ecs-proj/ecr-bootstrap/terraform.tfstate' \
             -backend-config='use_lockfile=true' \
         working-directory: ecr_bootstrap
@@ -114,16 +77,16 @@ jobs:
           set -eux
           terraform apply \
             -var 'repository_name=${{ env.ECR_REPO_NAME }}' \
-            -var 'lifecycle_policy=${{ inputs.lifecycle_policy_file }}' \
-            -var 'iam_role=arn:aws:iam::${{ inputs.aws_account_id }}:role/${{ inputs.github_iam_role }}' \
-            -var 'aws_account_id=${{ inputs.aws_account_id }}' \
+            -var 'lifecycle_policy=${{ vars.lifecycle_policy_file }}' \
+            -var 'iam_role=arn:aws:iam::${{ vars.aws_account_id }}:role/${{ vars.githubb_iam_role }}' \
+            -var 'aws_account_id=${{ vars.aws_account_id }}' \
             -auto-approve
         working-directory: ecr_bootstrap
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
         with:
-          registries: ${{ inputs.aws_account_id }}
+          registries: ${{ vars.aws_account_id }}
       - name: Build, tag, and push image to Amazon ECR
         id: build-publish
         shell: bash
@@ -132,7 +95,7 @@ jobs:
           ECR_REPOSITORY: ${{ env.ECR_REPO_NAME }}
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
-          docker build -f "${{ inputs.path_to_dockerfile }}" -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
+          docker build -f "${{ vars.path_to_dockerfile }}" -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
           docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           echo "IMAGE $IMAGE_TAG is pushed to $ECR_REGISTRY/$ECR_REPOSITORY"
           echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
