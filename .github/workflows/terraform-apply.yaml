@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read # Required to checkout and read repo files
-      security-events: write # Required to upload SARIF files to Security tab
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,7 +17,7 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: 'infra/'
-          format: 'sarif'
+          format: 'table'
           ignore-unfixed: true
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
