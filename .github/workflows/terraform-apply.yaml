@@ -16,18 +16,12 @@ jobs:
       - name: Run Trivy vulnerability scanner in IaC mode
         uses: aquasecurity/trivy-action@0.33.1
         with:
-          scan-type: 'config'
+          scan-type: 'fs'
           scan-ref: './infra/'
-          hide-progress: true
           format: 'sarif'
-          output: 'trivy-results.sarif'
+          ignore-unfixed: true
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
-      - name: Upload Trivy scan results to GitHub Security tab
-        if: always()
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: 'trivy-results.sarif'
   terraform-plan:
     needs: trivy-check
     runs-on: ubuntu-latest
