@@ -32,7 +32,7 @@ jobs:
             -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
             -backend-config='key=${{ vars.infra_key }}' \
             -backend-config='use_lockfile=true' \
-        working-directory: app
+        working-directory: infra
       - name: TF plan for repo saved
         shell: bash
         run: |
