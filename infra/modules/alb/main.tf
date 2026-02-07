@@ -24,11 +24,12 @@ resource "aws_lb_target_group" "ecs_target_group" {
 
 # ALB Section
 resource "aws_lb" "ecs_alb" {
-  name               = "ecs-alb"
-  load_balancer_type = "application"
-  security_groups    = [var.alb_sg_id]
-  subnets            = var.alb_subnet_public
-  # enable_deletion_protection = true - if i wanted for prod but i need to del so it doesn't drain my wallet
+  name                       = "ecs-alb"
+  load_balancer_type         = "application"
+  security_groups            = [var.alb_sg_id]
+  subnets                    = var.alb_subnet_public
+  drop_invalid_header_fields = true
+  internal                   = false
 
   tags = {
     Name    = "ecs-alb"
