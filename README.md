@@ -69,4 +69,19 @@ Hooks include Terraform formatting and Terraform-focused scanners
 ![Pipeline success ss 2026-02-07 at 19.45.47.png](images/Pipeline%20success%20ss%202026-02-07%20at%2019.45.47.png)
 
 # Learning and Reflections:
+## Learning and Reflections
 
+The biggest takeaway from this project was that most “it doesn’t work” moments came down to **networking fundamentals**. 
+
+I learned to slow down and systematically verify the full request path end-to-end: **Route53 -> ALB listener rules -> 
+target group health checks -> ECS task networking (subnets/routes) -> security groups (inbound + outbound)**. 
+
+Small mismatches (ports, health check paths, SG references, route tables) can look like an application issue when it’s 
+actually just traffic not flowing where you think it is.
+
+On the process side, I reinforced the importance of **staying consistent** and not trying to solve everything in 
+one jump. Breaking problems into smaller checks, asking for help when stuck, and avoiding overthinking made the biggest 
+difference in getting from “provisioned” to “actually reachable and stable.” 
+
+I also gained appreciation for building in guardrails early (CI gating/approvals, concurrency control, and pre-commit scanning) 
+so mistakes can be caught quickly before they become expensive or time-consuming to debug.
