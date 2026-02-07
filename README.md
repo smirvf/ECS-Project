@@ -14,6 +14,8 @@
 
 ![threat-composer-gif.gif](images/threat-composer-gif.gif)
 
+## Architecture Diagram:
+![Network-diagram.png](images/Network-diagram.png)
 
 ## Repository Structure
 ```text
@@ -90,9 +92,6 @@ and risky patterns are caught early instead of during terraform apply.
 Hooks include Terraform formatting and Terraform-focused scanners 
 **(via pre-commit-terraform)**, plus **Checkov** and **Trivy** misconfiguration scanning for **Terraform/IaC;** supporting hygiene checks like 
 **YAML formatting** and **workflow/Docker linting** help keep CI and container build files clean as well.
-
-## Diagram Overview of the Architecture:
-![Network-diagram.png](images/Network-diagram.png)
 
 ## Proof of application working
 ![Threat-app-running-proof.png](images/Threat-app-running-proof.png)
