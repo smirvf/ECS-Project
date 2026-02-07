@@ -1,0 +1,14 @@
+name: Health Check
+on:
+  workflow_dispatch:
+jobs:
+  check-single-with-retry:
+    runs-on:
+      - ubuntu-latest
+    name: Check single, with retry
+    steps:
+      - uses: jtalk/url-health-check-action@v4
+        with:
+          url: https://ecs.saahirmir.com/health
+          max-attempts: 3
+          retry-delay: 2s

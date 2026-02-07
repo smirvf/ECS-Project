@@ -1,8 +1,8 @@
 name: Terraform Plan
 on:
   workflow_dispatch:
-# concurrency required to avoid terraform lock contention during ECR provisioning
-concurrency: ci-${{ github.repository }}-terraform-plan-pipeline
+# concurrency required to avoid terraform lock contention during TF Destroy / Apply
+concurrency: ci-${{ github.repository }}-terraform-pipeline
 jobs:
   terraform-plan:
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
             -input=false \
             -out=tfplan
           terraform show tfplan
-        working-directory: app
+        working-directory: infra
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
         with:
@@ -78,12 +78,15 @@ jobs:
             -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
             -backend-config='key=${{ vars.infra_key }}' \
             -backend-config='use_lockfile=true' \
-        working-directory: app
+        working-directory: infra
       - name: Download plan artifact
         uses: actions/download-artifact@v4
         with:
           name: tfplan
           path: app
       - name: Terraform apply (saved plan)
-        working-directory: app
-        run: "set -eux\nterraform apply tfplan \n"
+        working-directory: infra
+        shell: bash
+        run: |
+          set -eux
+          terraform apply tfplan

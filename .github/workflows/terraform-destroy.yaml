@@ -1,0 +1,93 @@
+name: Terraform Destroy
+on:
+  workflow_dispatch:
+# concurrency required to avoid terraform lock contention during TF Destroy / Apply
+concurrency: ci-${{ github.repository }}-terraform-pipeline
+jobs:
+  terraform-destroy-plan:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          role-to-assume: ${{ vars.role_to_assume_tf_state }}
+          aws-region: ${{ vars.aws_region }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+      - name: TF init
+        shell: bash
+        run: |
+          set -eux
+          terraform init -upgrade -reconfigure \
+            -backend-config='skip_metadata_api_check=true' \
+            -backend-config='skip_region_validation=true' \
+            -backend-config='skip_credentials_validation=true' \
+            -backend-config='region=${{ vars.aws_region }}' \
+            -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
+            -backend-config='key=${{ vars.infra_key }}' \
+            -backend-config='use_lockfile=true' \
+        working-directory: infra
+      - name: TF plan for repo to destroy
+        shell: bash
+        run: |
+          set -eux
+          terraform plan \
+            -destroy \
+            -input=false \
+            -out=tfdestroy
+          terraform show tfdestroy
+        working-directory: infra
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfdestroy
+          path: app/tfdestroy
+  terraform-destroy-apply:
+    needs: terraform-destroy-plan
+    if: ${{ needs.terraform-destroy-plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          role-to-assume: ${{ vars.role_to_assume_tf_state }}
+          aws-region: ${{ vars.aws_region }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+      - name: TF init
+        shell: bash
+        run: |
+          set -eux
+          terraform init -upgrade -reconfigure \
+            -backend-config='skip_metadata_api_check=true' \
+            -backend-config='skip_region_validation=true' \
+            -backend-config='skip_credentials_validation=true' \
+            -backend-config='region=${{ vars.aws_region }}' \
+            -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
+            -backend-config='key=${{ vars.infra_key }}' \
+            -backend-config='use_lockfile=true' \
+        working-directory: infra
+      - name: Download plan artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfdestroy
+          path: app
+      - name: Terraform destroy saved plan
+        working-directory: infra
+        shell: bash
+        run: |
+          set -eux
+          terraform apply tfdestroy
