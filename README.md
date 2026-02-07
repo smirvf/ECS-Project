@@ -18,7 +18,7 @@ This repository provisions a small, production-style AWS deployment of the AWS T
 - **DNS + TLS**:
     - **Route 53** hosts the domain and uses an **Alias A record** (`ecs.saahirmir.com`) to point to the ALB.
     - **ACM** provides the TLS certificate used by the ALB **HTTPS (443)** listener.
-- **Egress (private)**: Private subnet egress is handled via a **Regional NAT Gateway** (where required) so tasks can reach the internet without being publicly addressable.
+- **Egress (private)**: Private subnet egress is handled via a **Regional NAT Gateway** (where required) so tasks can reach the internet without being publicly addressable ie to ECR.
 - **Security groups (least privilege)**:
     - ALB SG allows inbound **80/443** from the internet.
     - Task SG only allows inbound on the app port **from the ALB SG** (no direct public access).
