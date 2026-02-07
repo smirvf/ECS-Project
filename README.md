@@ -1,13 +1,52 @@
 
 # ECS-Project - AWS Threat Composer App Hosted on ECS with Terraform 👾
 
+<!-- Project badges -->
+![Docker](https://img.shields.io/badge/Container-Docker-blue)
+![AWS ECS](https://img.shields.io/badge/AWS-ECS-orange)
+![Terraform](https://img.shields.io/badge/IaC-Terraform-purple)
+![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue)
+
+## Overview of the setup
+
 `This project is based on Amazon's Threat Composer Tool, an open source tool designed to facilitate threat modeling and improve security assessments.
 `
 
 ![threat-composer-gif.gif](images/threat-composer-gif.gif)
 
-## Overview of the setup
-This repository provisions a small, production-style AWS deployment of the AWS Threat Modeling Tool Application using Terraform modules.
+
+## Repository Structure
+```text
+├── .gitignore
+├── .dockerignore
+├── .checkov.yaml
+├── .pre-commit-config.yaml
+├── .trivyignore
+├── .github
+│   └── workflows
+│       ├── docker-image.yaml
+│       ├── health_check.yaml
+│       ├── terraform-apply.yaml
+│       └── terraform-destroy.yaml
+├── s3_bootstrap
+├── ecr_bootstrap
+├── app
+├── images
+├── Dockerfile
+├── docker-file-old
+├── README.md
+└── infra
+    ├── main.tf
+    ├── modules
+    │   ├── acm
+    │   ├── alb
+    │   ├── ecs
+    │   ├── sg
+    │   └── vpc
+    ├── outputs.tf
+    ├── provider.tf
+    └── variables.tf
+```
 
 ### Infrastructure (AWS)
 - **Region + AZs**: Deployed in **eu-west-2** across **two Availability Zones** for resilience.
@@ -20,7 +59,7 @@ This repository provisions a small, production-style AWS deployment of the AWS T
     - **ACM** provides the TLS certificate used by the ALB **HTTPS (443)** listener.
 - **Egress (private)**: Private subnet egress is handled via a **Regional NAT Gateway** (where required) so tasks can reach the internet without being publicly addressable ie to ECR.
 - **Security groups (least privilege)**:
-    - ALB SG allows inbound **80/443** from the internet.
+    - ALB SG allows inbound **443** from the internet. (**80 redirect to 443**)
     - Task SG only allows inbound on the app port **from the ALB SG** (no direct public access).
 
 ### Terraform approach (best-practice structure)
