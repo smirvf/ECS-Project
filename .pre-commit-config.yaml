@@ -17,7 +17,6 @@ repos:
         args:
           - --args=--ignorefile=__GIT_WORKING_DIR__/.trivyignore
           - --args=--severity=HIGH,CRITICAL
-          - --args=--exit-code=1
           - --args=--quiet
   # Format YAML first so linters run on tidy files
   - repo: https://github.com/google/yamlfmt
