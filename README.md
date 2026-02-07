@@ -68,7 +68,6 @@ Hooks include Terraform formatting and Terraform-focused scanners
 ### Domain URL Health Check
 ![Pipeline success ss 2026-02-07 at 19.45.47.png](images/Pipeline%20success%20ss%202026-02-07%20at%2019.45.47.png)
 
-# Learning and Reflections:
 ## Learning and Reflections
 
 The biggest takeaway from this project was that most “it doesn’t work” moments came down to **networking fundamentals**. 
