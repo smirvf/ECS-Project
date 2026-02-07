@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
-          path: app/tfplan
+          path: infra/tfplan
   terraform-apply:
     needs: terraform-plan
     if: ${{ needs.terraform-plan.result == 'success' }}
@@ -83,7 +83,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tfplan
-          path: app
+          path: infra
       - name: Terraform apply (saved plan)
         working-directory: infra
         shell: bash
