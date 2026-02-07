@@ -1,10 +1,35 @@
-name: Terraform Apply
+name: Terraform Trivy Check + Plan + Apply
 on:
   workflow_dispatch:
 # concurrency required to avoid terraform lock contention during TF Destroy / Apply
 concurrency: ci-${{ github.repository }}-terraform-pipeline
 jobs:
+  trivy-check:
+    name: trivy-check
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read # Required to checkout and read repo files
+      security-events: write # Required to upload SARIF files to Security tab
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run Trivy vulnerability scanner in IaC mode
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: 'config'
+          scan-ref: './infra/'
+          hide-progress: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'trivy-results.sarif'
   terraform-plan:
+    needs: trivy-check
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -37,6 +62,8 @@ jobs:
         shell: bash
         run: |
           set -eux
+          terraform validate
+          terraform fmt -recursive -diff
           terraform plan \
             -input=false \
             -out=tfplan
@@ -49,7 +76,7 @@ jobs:
           path: infra/tfplan
   terraform-apply:
     needs: terraform-plan
-    if: ${{ needs.terraform-plan.result == 'success' }}
+    #    if: ${{ needs.terraform-plan.result == 'success' }}
     runs-on: ubuntu-latest
     environment: prod
     permissions:

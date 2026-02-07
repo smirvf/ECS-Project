@@ -50,7 +50,7 @@ jobs:
           path: infra/tfdestroy
   terraform-destroy-apply:
     needs: terraform-destroy-plan
-    if: ${{ needs.terraform-destroy-plan.result == 'success' }}
+    #    if: ${{ needs.terraform-destroy-plan.result == 'success' }}
     runs-on: ubuntu-latest
     environment: prod
     permissions:
