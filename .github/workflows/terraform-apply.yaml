@@ -15,9 +15,9 @@ jobs:
       - name: Run Trivy vulnerability scanner in IaC mode
         uses: aquasecurity/trivy-action@0.33.1
         with:
-          scan-type: 'fs'
+          scan-type: 'config'
           scan-ref: 'infra/'
-          format: 'config'
+          format: 'table'
           ignore-unfixed: true
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
