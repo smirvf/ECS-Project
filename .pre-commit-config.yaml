@@ -7,7 +7,7 @@ repos:
       - id: terraform_fmt
         files: ^(infra|ecr_bootstrap|s3_bootstrap)/.*\.tf$
       - id: terraform_docs
-        files: ^^(infra|ecr_bootstrap|s3_bootstrap)/.*\.tf$
+        files: ^(infra|ecr_bootstrap|s3_bootstrap)/.*\.tf$
         args: [--args=--config=.terraform-docs.yml]
       - id: terraform_checkov
         stages: [pre-push]
