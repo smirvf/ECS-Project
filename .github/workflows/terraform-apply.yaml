@@ -1,4 +1,4 @@
-name: Terraform Plan
+name: Terraform Apply
 on:
   workflow_dispatch:
 # concurrency required to avoid terraform lock contention during TF Destroy / Apply
