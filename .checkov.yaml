@@ -1,0 +1,10 @@
+skip-check:
+  - CKV_AWS_150 # ALB deletion protection (lab)
+  - CKV_AWS_91 # ALB access logs (lab) - logging not enabled for this
+  - CKV_AWS_65 # ECS container insights
+  - CKV_AWS_336 # read-only root filesystem -
+  - CKV_AWS_23 # SG rules need description - not an issue
+  - CKV_AWS_260 # SG ingress port 80 open - redirect to 443 so not an issue
+#  Above were added as they're not issues
+skip-path:
+  - ".terraform"

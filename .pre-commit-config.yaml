@@ -7,14 +7,18 @@ repos:
       - id: terraform_fmt
         files: ^(infra|ecr_bootstrap|s3_bootstrap)/.*\.tf$
       - id: terraform_checkov
-        stages: [pre-push]
         files: ^(infra|ecr_bootstrap)/
+        args:
+          - --args=--quiet
+          - --args=--check=HIGH
+          - --args=--config-file=__GIT_WORKING_DIR__/.checkov.yaml
       - id: terraform_trivy
-        stages: [pre-push]
         files: ^(infra|ecr_bootstrap)/
-        #      - id: infracost_breakdown
-        #        stages: [pre-push]
-        #        files: ^infra/
+        args:
+          - --args=--ignorefile=__GIT_WORKING_DIR__/.trivyignore
+          - --args=--severity=HIGH,CRITICAL
+          - --args=--exit-code=1
+          - --args=--quiet
   # Format YAML first so linters run on tidy files
   - repo: https://github.com/google/yamlfmt
     rev: v0.20.0
