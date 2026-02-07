@@ -47,7 +47,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tfdestroy
-          path: app/tfdestroy
+          path: infra/tfdestroy
   terraform-destroy-apply:
     needs: terraform-destroy-plan
     if: ${{ needs.terraform-destroy-plan.result == 'success' }}
@@ -84,7 +84,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tfdestroy
-          path: app
+          path: infra
       - name: Terraform destroy saved plan
         working-directory: infra
         shell: bash
