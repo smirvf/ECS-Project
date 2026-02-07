@@ -1,4 +1,4 @@
-name: Docker image build and publish
+name: Docker Image Build + Scan + Publish
 on:
   workflow_dispatch:
 # concurrency required to avoid terraform lock contention during ECR provisioning
