@@ -5,20 +5,19 @@ repos:
     rev: v1.103.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
       - id: terraform_fmt
-        files: ^(infra|ecr_bootstrap|s3_bootstrap)/.*\.tf$
+        files: ^(infra|bootstrap|)/.*\.tf$
 
       - id: terraform_checkov
-        files: ^(infra|ecr_bootstrap)/
+        files: ^(infra|bootstrap/ecr_bootstrap)/
         args:
           - --args=--quiet
           - --args=--check=HIGH
           - --args=--config-file=__GIT_WORKING_DIR__/.checkov.yaml
 
       - id: terraform_trivy
-        files: ^(infra|ecr_bootstrap)/
+        files: ^(infra|bootstrap/ecr_bootstrap)/
         args:
-          - --args=--skip-dirs=__GIT_WORKING_DIR__/s3_bootstrap
-          - --args=--skip-dirs=__GIT_WORKING_DIR__/old
+          - --args=--skip-dirs=__GIT_WORKING_DIR__/bootstrap/s3_bootstrap
           - --args=--ignorefile=__GIT_WORKING_DIR__/.trivyignore
           - --args=--severity=HIGH,CRITICAL
           - --args=--quiet

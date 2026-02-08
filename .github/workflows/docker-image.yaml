@@ -87,7 +87,7 @@ jobs:
             -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
             -backend-config='key=${{ vars.ecr_key }}' \
             -backend-config='use_lockfile=true' \
-        working-directory: ecr_bootstrap
+        working-directory: bootstrap/ecr_bootstrap
 
       - name: Create ECR repo [TF apply]
         shell: bash
@@ -99,7 +99,7 @@ jobs:
             -var 'iam_role=arn:aws:iam::${{ vars.aws_account_id }}:role/${{ vars.githubb_iam_role }}' \
             -var 'aws_account_id=${{ vars.aws_account_id }}' \
             -auto-approve
-        working-directory: ecr_bootstrap
+        working-directory: bootstrap/ecr_bootstrap
 
       - name: Login to Amazon ECR
         id: login-ecr
