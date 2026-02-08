@@ -53,9 +53,6 @@ jobs:
         run: |
           set -eux
           terraform init -upgrade -reconfigure \
-            -backend-config='skip_metadata_api_check=true' \
-            -backend-config='skip_region_validation=true' \
-            -backend-config='skip_credentials_validation=true' \
             -backend-config='region=${{ vars.aws_region }}' \
             -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
             -backend-config='key=${{ vars.infra_key }}' \
