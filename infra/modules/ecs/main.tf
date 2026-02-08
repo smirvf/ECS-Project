@@ -10,6 +10,57 @@ resource "aws_cloudwatch_log_group" "ecs_cw_group" {
   }
 }
 
+resource "aws_cloudwatch_dashboard" "ecs_cw_dashboard" {
+  dashboard_name = "ECS Threat App Dashboard"
+
+  dashboard_body = jsonencode({
+    start          = "-PT6H"
+    periodOverride = "inherit"
+    widgets = [
+      {
+        type   = "metric"
+        x      = 0
+        y      = 0
+        width  = 12
+        height = 6
+        properties = {
+          region = var.aws_region
+          title  = "ECS Service CPU / Memory"
+          view   = "timeSeries"
+          stat   = "Average"
+          period = 60
+          metrics = [
+            [
+              "AWS/ECS", "CPUUtilization",
+              "ClusterName", aws_ecs_cluster.ecs_cluster.name,
+              "ServiceName", aws_ecs_service.ecs_proj_service.name
+            ],
+            [
+              "AWS/ECS", "MemoryUtilization",
+              "ClusterName", aws_ecs_cluster.ecs_cluster.name,
+              "ServiceName", aws_ecs_service.ecs_proj_service.name
+            ],
+          ]
+        }
+      },
+      {
+        type   = "log"
+        x      = 12
+        y      = 0
+        width  = 12
+        height = 6
+        properties = {
+          region = var.aws_region
+          title  = "Recent logs (threat-app)"
+          view   = "table"
+          query  = "SOURCE '${aws_cloudwatch_log_group.ecs_cw_group.name}'\n| sort @timestamp desc\n| limit 50"
+        }
+      }
+    ]
+  })
+}
+
+
 # ECS Cluster Section
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = "ecs_cluster"
