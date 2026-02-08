@@ -51,7 +51,6 @@ You can explore the tool's dashboard here: [Threat Composer Tool](https://awslab
 ├── app
 ├── images
 ├── Dockerfile
-├── docker-file-old
 ├── README.md
 └── infra
     ├── main.tf
