@@ -1,8 +1,8 @@
 # CloudWatch Group Section
 resource "aws_cloudwatch_log_group" "ecs_cw_group" {
   name              = "/ecs/threat-app"
-  retention_in_days = 3
-  #   setting retention to 3 days as more isn't required
+  retention_in_days = 2
+  #   setting retention to 2 days as more isn't required
 
   tags = {
     Name    = "ecs_cloudWatch_group"
