@@ -46,8 +46,9 @@ You can explore the tool's dashboard here: [Threat Composer Tool](https://awslab
 │       ├── health_check.yaml
 │       ├── terraform-apply.yaml
 │       └── terraform-destroy.yaml
-├── s3_bootstrap
-├── ecr_bootstrap
+├── bootstrap
+│       └── s3_bootstrap
+│       └── ecr_bootstrap
 ├── app
 ├── images
 ├── Dockerfile
