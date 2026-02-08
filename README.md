@@ -17,6 +17,23 @@
 ## Architecture Diagram:
 ![Network-diagram.png](images/Network-diagram.png)
 
+## Local App Set-up:
+1. Clone app
+2. cd to /app
+
+
+Do the following commands in terminal:
+```bash
+yarn install
+yarn build
+yarn global add serve
+serve -s build
+```
+Enter into your browser:
+```text
+http://localhost:3000
+```
+
 ## Repository Structure
 ```text
 ├── .gitignore
@@ -61,7 +78,7 @@
     - **ACM** provides the TLS certificate used by the ALB **HTTPS (443)** listener.
 - **Egress (private)**: Private subnet egress is handled via a **Regional NAT Gateway** (where required) so tasks can reach the internet without being publicly addressable ie to ECR.
 - **Security groups (least privilege)**:
-    - ALB SG allows inbound **443** from the internet. (**80 redirect to 443**)
+    - ALB SG allows inbound **443** from the internet. (**Port 80 used to allow redirect to 443 for ALB Listener Rule**)
     - Task SG only allows inbound on the app port **from the ALB SG** (no direct public access).
 
 ### Terraform approach (best-practice structure)
