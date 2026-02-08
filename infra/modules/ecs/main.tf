@@ -1,8 +1,8 @@
 # CloudWatch Group Section
 resource "aws_cloudwatch_log_group" "ecs_cw_group" {
   name              = "/ecs/threat-app"
-  retention_in_days = 2
-  #   setting retention to 2 days as more isn't required
+  retention_in_days = 3
+  #   setting retention to 3 days as more isn't required
 
   tags = {
     Name    = "ecs_cloudWatch_group"
@@ -11,7 +11,7 @@ resource "aws_cloudwatch_log_group" "ecs_cw_group" {
 }
 
 resource "aws_cloudwatch_dashboard" "ecs_cw_dashboard" {
-  dashboard_name = "ECS Threat App Dashboard"
+  dashboard_name = "ecs-threat-app-dashboard"
 
   dashboard_body = jsonencode({
     start          = "-PT6H"
@@ -117,6 +117,10 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
       }
     }
   ])
+  tags = {
+    Name    = "ecs_task_definition"
+    Project = "ecs"
+  }
 }
 
 # ECS Service Section
