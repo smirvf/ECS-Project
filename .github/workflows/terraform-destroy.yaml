@@ -6,9 +6,11 @@ concurrency: ci-${{ github.repository }}-terraform-pipeline
 jobs:
   terraform-destroy-plan:
     runs-on: ubuntu-latest
+
     permissions:
       id-token: write
       contents: read
+
     steps:
       - uses: actions/checkout@v4
       - name: Configure AWS Credentials
@@ -16,23 +18,23 @@ jobs:
         with:
           role-to-assume: ${{ vars.role_to_assume_tf_state }}
           aws-region: ${{ vars.aws_region }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
+
       - name: TF init
         shell: bash
         run: |
           set -eux
           terraform init -upgrade -reconfigure \
-            -backend-config='skip_metadata_api_check=true' \
-            -backend-config='skip_region_validation=true' \
-            -backend-config='skip_credentials_validation=true' \
             -backend-config='region=${{ vars.aws_region }}' \
             -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
             -backend-config='key=${{ vars.infra_key }}' \
             -backend-config='use_lockfile=true' \
         working-directory: infra
+
       - name: TF plan for repo to destroy
         shell: bash
         run: |
@@ -43,15 +45,16 @@ jobs:
             -out=tfdestroy
           terraform show tfdestroy
         working-directory: infra
+
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
         with:
           name: tfdestroy
           path: infra/tfdestroy
+
   terraform-destroy-apply:
     needs: terraform-destroy-plan
     runs-on: ubuntu-latest
-
     environment: prod
 
     permissions:
@@ -76,9 +79,6 @@ jobs:
         run: |
           set -eux
           terraform init -upgrade -reconfigure \
-            -backend-config='skip_metadata_api_check=true' \
-            -backend-config='skip_region_validation=true' \
-            -backend-config='skip_credentials_validation=true' \
             -backend-config='region=${{ vars.aws_region }}' \
             -backend-config='bucket=${{ vars.backend_s3_bucket }}' \
             -backend-config='key=${{ vars.infra_key }}' \

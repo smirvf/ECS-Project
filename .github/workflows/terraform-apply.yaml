@@ -8,7 +8,7 @@ concurrency: ci-${{ github.repository }}-terraform-pipeline
 jobs:
   trivy-check:
     name: trivy-check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     permissions:
       contents: read # Required to checkout and read repo files
