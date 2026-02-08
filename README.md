@@ -58,7 +58,7 @@ You can explore the tool's dashboard here: [Threat Composer Tool](https://awslab
     ├── modules
     │   ├── acm
     │   ├── alb
-    │   ├── ecs
+    │   ├── ecs (cloudwatch here also)
     │   ├── sg
     │   └── vpc
     ├── outputs.tf
