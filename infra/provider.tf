@@ -20,3 +20,5 @@ terraform {
 provider "aws" {
   region = "eu-west-2"
 }
+
+# Placeholder text to test trivy ignore changes #4

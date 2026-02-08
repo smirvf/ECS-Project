@@ -1,5 +1,4 @@
 AVD-AWS-0053
 AVD-AWS-0104
-
-# 0053- Public facing ALB
-# 0104- No public egress for SG
+AWS-0053
+AWS-0104
