@@ -32,8 +32,7 @@ You can explore the tool's dashboard here: [Threat Composer Tool](https://awslab
 ![threat-composer-gif.gif](images/threat-composer-gif.gif)
 
 ## Architecture Diagram:
-![Architecture diagram new.png](images/Architecture%20diagram%20new.png)
-
+![Architecture Diagram dark.png](images/Architecture%20Diagram%20dark.png)
 ## Repository Structure
 ```text
 ├── .gitignore
@@ -199,6 +198,7 @@ Hooks include Terraform formatting and Terraform-focused scanners
 ### Monitoring (CloudWatch + custom dashboard)
 This deployment uses **Amazon CloudWatch** for both **logs** and **metrics** so you can troubleshoot end-to-end (ALB -> Target Group -> ECS tasks) in one place.
 
+![Dashboard new.png](images/Dashboard%20new.png)
 ### Logs
 - **ECS task logs -> CloudWatch Logs** via the `awslogs` log driver (per container).
 - Log groups/streams exist in **eu-west-2** (CloudWatch is regional).
@@ -210,7 +210,6 @@ This deployment uses **Amazon CloudWatch** for both **logs** and **metrics** so 
 ### Custom dashboard
 
 A custom CloudWatch dashboard was added to make troubleshooting faster during demos and incident-style debugging.
-![cw-dashboard.png](images/cw-dashboard.png)
 
 Typical widgets included:
 - **ALB**: `RequestCount`, `TargetResponseTime`, `HTTPCode_Target_5XX_Count`, `HealthyHostCount`.
