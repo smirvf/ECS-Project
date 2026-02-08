@@ -50,12 +50,14 @@ jobs:
           path: infra/tfdestroy
   terraform-destroy-apply:
     needs: terraform-destroy-plan
-    #    if: ${{ needs.terraform-destroy-plan.result == 'success' }}
     runs-on: ubuntu-latest
+
     environment: prod
+
     permissions:
       id-token: write
       contents: read
+
     steps:
       - uses: actions/checkout@v4
       - name: Configure AWS Credentials
@@ -63,10 +65,12 @@ jobs:
         with:
           role-to-assume: ${{ vars.role_to_assume_tf_state }}
           aws-region: ${{ vars.aws_region }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
+
       - name: TF init
         shell: bash
         run: |
@@ -80,11 +84,13 @@ jobs:
             -backend-config='key=${{ vars.infra_key }}' \
             -backend-config='use_lockfile=true' \
         working-directory: infra
+
       - name: Download plan artifact
         uses: actions/download-artifact@v4
         with:
           name: tfdestroy
           path: infra
+
       - name: Terraform destroy saved plan
         working-directory: infra
         shell: bash

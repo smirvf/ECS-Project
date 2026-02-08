@@ -1,17 +1,22 @@
 name: Terraform Trivy Check + Plan + Apply
 on:
   workflow_dispatch:
+
 # concurrency required to avoid terraform lock contention during TF Destroy / Apply
 concurrency: ci-${{ github.repository }}-terraform-pipeline
+
 jobs:
   trivy-check:
     name: trivy-check
     runs-on: ubuntu-24.04
+
     permissions:
       contents: read # Required to checkout and read repo files
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Run Trivy vulnerability scanner in IaC mode
         uses: aquasecurity/trivy-action@0.33.1
         with:
@@ -21,12 +26,15 @@ jobs:
           ignore-unfixed: true
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
+
   terraform-plan:
     needs: trivy-check
     runs-on: ubuntu-latest
+
     permissions:
       id-token: write
       contents: read
+
     steps:
       - uses: actions/checkout@v4
       - name: Configure AWS Credentials
@@ -34,10 +42,12 @@ jobs:
         with:
           role-to-assume: ${{ vars.role_to_assume_tf_state }}
           aws-region: ${{ vars.aws_region }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
+
       - name: TF init
         shell: bash
         run: |
@@ -51,6 +61,7 @@ jobs:
             -backend-config='key=${{ vars.infra_key }}' \
             -backend-config='use_lockfile=true' \
         working-directory: infra
+
       - name: TF plan for repo saved
         shell: bash
         run: |
@@ -62,19 +73,23 @@ jobs:
             -out=tfplan
           terraform show tfplan
         working-directory: infra
+
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
           path: infra/tfplan
+
   terraform-apply:
     needs: terraform-plan
-    #    if: ${{ needs.terraform-plan.result == 'success' }}
     runs-on: ubuntu-latest
+
     environment: prod
+
     permissions:
       id-token: write
       contents: read
+
     steps:
       - uses: actions/checkout@v4
       - name: Configure AWS Credentials
@@ -82,10 +97,12 @@ jobs:
         with:
           role-to-assume: ${{ vars.role_to_assume_tf_state }}
           aws-region: ${{ vars.aws_region }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
+
       - name: TF init
         shell: bash
         run: |
@@ -99,11 +116,13 @@ jobs:
             -backend-config='key=${{ vars.infra_key }}' \
             -backend-config='use_lockfile=true' \
         working-directory: infra
+
       - name: Download plan artifact
         uses: actions/download-artifact@v4
         with:
           name: tfplan
           path: infra
+
       - name: Terraform apply (saved plan)
         working-directory: infra
         shell: bash
