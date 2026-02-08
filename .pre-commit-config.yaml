@@ -4,8 +4,6 @@ repos:
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.103.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
-      - id: terraform_fmt
-        files: ^(infra|ecr_bootstrap|s3_bootstrap)/.*\.tf$
       - id: terraform_checkov
         files: ^(infra|ecr_bootstrap)/
         args:
