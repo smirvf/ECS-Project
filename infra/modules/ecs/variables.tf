@@ -15,6 +15,11 @@ variable "ecs_service_sg_id" {
   type = string
 }
 
+variable "aws_region" {
+  type        = string
+  default     = "eu-west-2"
+  description = "Default aws region for proj"
+}
 variable "ecs_subnet_private_2a_id" {
   type = string
 }
