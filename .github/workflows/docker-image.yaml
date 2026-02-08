@@ -5,7 +5,7 @@ on:
     paths:
       - "app/**"
       - "Dockerfile"
-      - ".github/workflows/build-push.yml"
+      - ".github/workflows/docker-image.yaml"
   workflow_dispatch:
 
 # concurrency required to avoid terraform lock contention during ECR provisioning
