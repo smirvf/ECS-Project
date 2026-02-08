@@ -19,7 +19,7 @@ COPY /app .
 # Build application
 RUN yarn build
 
-# Production Stage
+# Runner Stage
 FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
 
 # Use a built-in non-root user for security best practices
@@ -29,6 +29,7 @@ USER nginx
 COPY /app/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Copy the static build output from the build stage to Nginx's default HTML serving directory
+# (reducing file size as we don't unnecessary files)
 COPY --chown=nginx:nginx --from=builder /app/build /usr/share/nginx/html
 
 # Expose port 8080 to allow HTTP traffic
