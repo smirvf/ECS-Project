@@ -1,6 +1,6 @@
 variable "ecs_ecr_repo_name" {
   type        = string
-  default     = "smirvf_ecs-project"
+  default     = "smirvf_threat-composer-ecs-deployment"
   description = "ECR repo name!"
 }
 variable "ecs_alb_target_group_arn" {
