@@ -23,22 +23,6 @@
 - [Successful Pipeline Runs](#successful-pipeline-runs)
 - [Learning and Reflections](#learning-and-reflections)
 
-## Contents
-- [Overview of the setup](#overview-of-the-setup)
-- [Architecture Diagram](#architecture-diagram)
-- [Repository Structure](#repository-structure)
-- [Local App Set-up](#local-app-set-up)
-- [Dockerfile Explained](#dockerfile-explained)
-- [Run locally with Docker (build + run + health check)](#run-locally-with-docker-build--run--health-check)
-- [Infrastructure (AWS)](#infrastructure-aws)
-- [Terraform approach (best-practice structure)](#terraform-approach-best-practice-structure)
-- [CI/CD (GitHub Actions)](#cicd-github-actions)
-- [Security scanning](#security-scanning)
-- [Shift-left security (pre-commit)](#shift-left-security-pre-commit)
-- [Proof of application working](#proof-of-application-working)
-- [Successful Pipeline Runs](#successful-pipeline-runs)
-- [Learning and Reflections](#learning-and-reflections)
-
 ## Overview of the setup
 
 This project is based on Amazon's Threat Composer Tool, an open source tool designed to facilitate threat modeling and improve security assessments.
