@@ -31,7 +31,7 @@ You can explore the tool's dashboard here: [Threat Composer Tool](https://awslab
 ![threat-composer-gif.gif](images/threat-composer-gif.gif)
 
 ## Architecture Diagram:
-![Network-diagram.png](images/Network-diagram.png)
+![Architecture diagram new.png](images/Architecture%20diagram%20new.png)
 
 ## Repository Structure
 ```text
