@@ -1,5 +1,5 @@
 
-# ECS-Project - AWS Threat Composer App Hosted on ECS with Terraform 👾
+# AWS Threat Composer App Hosted on ECS with Terraform 👾
 
 <!-- Project badges -->
 ![Docker](https://img.shields.io/badge/Container-Docker-blue)
