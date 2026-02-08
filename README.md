@@ -112,6 +112,28 @@ ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]
 CMD ["-g", "daemon off;"]
 
 ```
+## Run locally with Docker (build + run + health check)
+From the repo root (where the Dockerfile lives):
+```
+# 1) Build the image
+docker build -t threat-composer:local .
+
+# 2) Run the container (maps host 8080 -> container 8080)
+docker run --rm --name threat-composer -p 8080:8080 threat-composer:local
+
+# (optional) run in detached mode instead:
+# docker run -d --rm --name threat-composer -p 8080:8080 threat-composer:local
+```
+To do a health check, run the following command:
+```
+curl -i http://localhost:8080/health
+# or just:
+curl http://localhost:8080/health
+```
+You can stop the container with:
+```
+docker stop threat-composer
+```
 
 ### Infrastructure (AWS)
 - **Region + AZs**: Deployed in **eu-west-2** across **two Availability Zones** for resilience.
