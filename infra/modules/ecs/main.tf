@@ -50,10 +50,24 @@ resource "aws_cloudwatch_dashboard" "ecs_cw_dashboard" {
         width  = 12
         height = 6
         properties = {
-          region = var.aws_region
-          title  = "Recent logs (threat-app)"
-          view   = "table"
-          query  = "SOURCE '${aws_cloudwatch_log_group.ecs_cw_group.name}'\n| sort @timestamp desc\n| limit 50"
+          type   = "metric"
+          x      = 0
+          y      = 6
+          width  = 12
+          height = 6
+          properties = {
+            region = var.aws_region
+            title  = "ALB Requests / Latency / 5XX"
+            view   = "timeSeries"
+            stat   = "Sum"
+            period = 60
+            metrics = [
+              ["AWS/ApplicationELB", "RequestCount", "LoadBalancer", var.ecs_alb_dimension],
+              ["AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", "LoadBalancer", var.ecs_alb_dimension],
+              ["AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", var.ecs_alb_dimension, { stat : "Average" }],
+              ["AWS/ApplicationELB", "HealthyHostCount", "LoadBalancer", var.ecs_alb_dimension, { stat : "Minimum" }]
+            ]
+          }
         }
       }
     ]

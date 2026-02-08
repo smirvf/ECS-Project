@@ -19,6 +19,7 @@
 - [CI/CD (GitHub Actions)](#cicd-github-actions)
 - [Security scanning](#security-scanning)
 - [Shift-left security (pre-commit)](#shift-left-security-pre-commit)
+- [Monitoring (CloudWatch + custom dashboard)](#monitoring-cloudwatch--custom-dashboard)
 - [Proof of application working](#proof-of-application-working)
 - [Successful Pipeline Runs](#successful-pipeline-runs)
 - [Learning and Reflections](#learning-and-reflections)
@@ -164,6 +165,7 @@ docker stop threat-composer
 - **Security groups (least privilege)**:
     - ALB SG allows inbound **443** from the internet. (**Port 80 used to allow redirect to 443 for ALB Listener Rule**)
     - Task SG only allows inbound on the app port **from the ALB SG** (no direct public access).
+- **Observability (CloudWatch)**: ECS task logs/metrics are shipped to **CloudWatch (regional)**, and a **custom CloudWatch dashboard** aggregates key ALB + ECS signals for quick troubleshooting.
 
 ### Terraform approach (best-practice structure)
 - **Modular design**: Infrastructure is broken into focused modules: `vpc`, `sg`, `alb`, `acm`, `ecs`.
@@ -193,6 +195,28 @@ and risky patterns are caught early instead of during terraform apply.
 Hooks include Terraform formatting and Terraform-focused scanners 
 **(via pre-commit-terraform)**, plus **Checkov** and **Trivy** misconfiguration scanning for **Terraform/IaC;** supporting hygiene checks like 
 **YAML formatting** and **workflow/Docker linting** help keep CI and container build files clean as well.
+
+### Monitoring (CloudWatch + custom dashboard)
+This deployment uses **Amazon CloudWatch** for both **logs** and **metrics** so you can troubleshoot end-to-end (ALB -> Target Group -> ECS tasks) in one place.
+
+### Logs
+- **ECS task logs -> CloudWatch Logs** via the `awslogs` log driver (per container).
+- Log groups/streams exist in **eu-west-2** (CloudWatch is regional).
+
+### Metrics
+- **ALB metrics** are available automatically in `AWS/ApplicationELB`.
+- **ECS metrics** are available via ECS service/task metrics, and (optionally) **Container Insights** metrics in `ECS/ContainerInsights` if enabled.
+
+### Custom dashboard
+
+A custom CloudWatch dashboard was added to make troubleshooting faster during demos and incident-style debugging.
+![cw-dashboard.png](images/cw-dashboard.png)
+
+Typical widgets included:
+- **ALB**: `RequestCount`, `TargetResponseTime`, `HTTPCode_Target_5XX_Count`, `HealthyHostCount`.
+- **ECS / tasks**: CPU and memory utilization, plus any Container Insights metrics if enabled.
+
+The dashboard is managed as code using Terraform (`aws_cloudwatch_dashboard`) so it can be recreated
 
 ## Proof of application working
 URL used: ecs.saahirmir.com

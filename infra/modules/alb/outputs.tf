@@ -19,4 +19,7 @@ output "target_group_arn" {
 output "https_listener_arn" {
   value = aws_lb_listener.ecs_alb_listener.arn
 }
+output "ecs_alb_dimension" {
+  value = aws_lb.ecs_alb.arn_suffix
+}
 

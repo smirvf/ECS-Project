@@ -26,3 +26,7 @@ variable "ecs_subnet_private_2a_id" {
 variable "ecs_subnet_private_2b_id" {
   type = string
 }
+
+variable "ecs_alb_dimension" {
+  type = string
+}

@@ -30,4 +30,5 @@ module "ecs" {
   ecs_service_sg_id        = module.sg.ecs_service_sg_id
   ecs_subnet_private_2a_id = module.vpc.ecs_subnet_private_2a_id
   ecs_subnet_private_2b_id = module.vpc.ecs_subnet_private_2b_id
+  ecs_alb_dimension        = module.alb.ecs_alb_dimension
 }
