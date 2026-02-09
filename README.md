@@ -15,6 +15,7 @@
 - [Dockerfile Explained](#dockerfile-explained)
 - [Run locally with Docker (build + run + health check)](#run-locally-with-docker-build--run--health-check)
 - [Infrastructure (AWS)](#infrastructure-aws)
+- [Cost & efficiency considerations](#cost--efficiency-considerations-business-impact)
 - [Terraform approach (best-practice structure)](#terraform-approach-best-practice-structure)
 - [CI/CD (GitHub Actions)](#cicd-github-actions)
 - [Security scanning](#security-scanning)
@@ -165,6 +166,31 @@ docker stop threat-composer
     - ALB SG allows inbound **443** from the internet. (**Port 80 used to allow redirect to 443 for ALB Listener Rule**)
     - Task SG only allows inbound on the app port **from the ALB SG** (no direct public access).
 - **Observability (CloudWatch)**: ECS task logs/metrics are shipped to **CloudWatch (regional)**, and a **custom CloudWatch dashboard** aggregates key ALB + ECS signals for quick troubleshooting.
+
+## Cost & efficiency considerations (business impact)
+
+This setup is designed to keep costs **predictable** and reduce common sources of waste while staying production-aligned.
+
+- **No certificate spend / lower ops overhead (ACM + ALB):** 
+TLS is terminated at the ALB using AWS Certificate Manager. 
+Public certificates used with ACM-integrated services (like Elastic Load Balancing) are **free**, which avoids 
+third-party certificate purchase/renewal overhead. 
+
+- **Predictable ingress costs (ALB):** The Application Load Balancer is billed as **ALB-hours + LCU-hours**, so cost 
+scales with runtime and real usage rather than fixed server sizing. 
+
+- **Private compute with controlled egress:** ECS tasks run in private subnets; outbound internet access is provided 
+via a NAT Gateway only when required. NAT Gateways are charged **per hour** and **per GB processed**, so keeping 
+environments lifecycle-managed (IaC) helps prevent “always-on” spend in non-prod.  
+
+- **Cost optimisation path (recommended improvement): VPC Endpoints instead of NAT for AWS services:** For production, 
+prefer **VPC Endpoints (PrivateLink / Gateway endpoints)** for AWS service access (e.g., CloudWatch Logs, ECR, S3) to
+reduce NAT Gateway usage and public data transfer. Gateway endpoints (S3/DynamoDB) have **no hourly charges**, and 
+endpoints are explicitly called out in AWS Well-Architected as a way to reduce NAT costs. 
+
+- **Observability spend is controlled via retention (configurable + enforced):** Log retention is set explicitly 
+(not “store forever by accident”) and can be tuned per environment requirements, balancing troubleshooting needs vs 
+ongoing CloudWatch Logs storage/analysis costs. 
 
 ### Terraform approach (best-practice structure)
 - **Modular design**: Infrastructure is broken into focused modules: `vpc`, `sg`, `alb`, `acm`, `ecs`.
